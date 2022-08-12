@@ -2,6 +2,7 @@ package ru.netology.domain.data;
 
 import com.github.javafaker.Faker;
 import lombok.SneakyThrows;
+import lombok.Value;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
@@ -19,6 +20,38 @@ public class DataHelper {
 
     private DataHelper() {
     }
+
+    @Value
+    public static class AuthInfo {
+        private String login;
+        private String password;
+    }
+
+    public static AuthInfo getAuthInfoRestApi() {
+        return new AuthInfo("vasya", "qwerty123");
+    }
+    @Value
+    public static class VerificationInfo {
+        private String login;
+        private String code;
+    }
+
+    public static VerificationInfo getVerificationInfoFor(String login, String code) {
+        return new VerificationInfo(login, code);
+    }
+
+    @Value
+    public static class Transaction {
+        private String from;
+        private String to;
+        private int amount;
+    }
+
+    public static Transaction getTransaction(String from, String to, int amount) {
+        return new Transaction(from, to, amount);
+    }
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     public static User getAuthInfo() {
         return requestUser();

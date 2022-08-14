@@ -30,9 +30,10 @@ public class DataHelper {
         private String password;
     }
 
-    public static AuthInfo getAuthInfoRestApi() {
-        return new AuthInfo("vasya", "qwerty123");
+    public static AuthInfo getAuthInfoRestApi(String login) {
+        return new AuthInfo(login, pass);
     }
+
     @Value
     public static class VerificationInfo {
         private String login;
@@ -177,7 +178,7 @@ public class DataHelper {
                     userLogin,
                     //Пароль qwerty123:
                     vasyaPassEncrypted);
-            return runner.query(conn, sqlSelectUser, userId,  new BeanHandler<>(User.class));
+            return runner.query(conn, sqlSelectUser, userId, new BeanHandler<>(User.class));
         }
     }
 

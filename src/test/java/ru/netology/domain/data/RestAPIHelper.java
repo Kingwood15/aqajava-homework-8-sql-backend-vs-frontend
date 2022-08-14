@@ -17,10 +17,10 @@ public class RestAPIHelper {
             .log(LogDetail.ALL)
             .build();
 
-    public void openLoginPage() {
+    public void openLoginPage(User user) {
         given()
                 .spec(requestSpec)
-                .body(DataHelper.getAuthInfoRestApi())
+                .body(DataHelper.getAuthInfoRestApi(user.getLogin()))
                 .when()
                 .post("/api/auth")
                 .then()
@@ -29,16 +29,16 @@ public class RestAPIHelper {
 
     public String verificationCodePage(User user, String verifyCode) {
         String token =
-        given()
-                .spec(requestSpec)
-                .body(DataHelper.getVerificationInfoFor(user.getLogin(),verifyCode))
-                .when()
-                .post("/api/auth/verification")
-                .then()
-                .statusCode(200)
-                .extract()
-                .response()
-                .path("token");
+                given()
+                        .spec(requestSpec)
+                        .body(DataHelper.getVerificationInfoFor(user.getLogin(), verifyCode))
+                        .when()
+                        .post("/api/auth/verification")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .response()
+                        .path("token");
         return token;
     }
 
@@ -46,7 +46,7 @@ public class RestAPIHelper {
         Card[] cardsBalance =
                 given()
                         .spec(requestSpec)
-                        .header("Authorization", "Bearer "+ token)
+                        .header("Authorization", "Bearer " + token)
                         .when()
                         .get("/api/cards")
                         .then()
@@ -59,7 +59,7 @@ public class RestAPIHelper {
     public void makeTransaction(String token, String cardFrom, String cardTo, int sum) {
         given()
                 .spec(requestSpec)
-                .header("Authorization", "Bearer "+ token)
+                .header("Authorization", "Bearer " + token)
                 .body(DataHelper.getTransaction(cardFrom, cardTo, sum))
                 .when()
                 .post("/api/transfer")

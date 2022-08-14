@@ -1,12 +1,15 @@
 package ru.netology.domain.data;
 
 import com.github.javafaker.Faker;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
 import lombok.Value;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
-import ru.netology.mode.User;
 
 import java.sql.DriverManager;
 

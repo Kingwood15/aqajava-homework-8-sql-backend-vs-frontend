@@ -23,7 +23,7 @@ public class TransactionRestAPITest {
         RestAPIHelper page = new RestAPIHelper();
         var testUser = DataHelper.getAuthInfo();
         int sum = 100;
-        String card1 = "5559 0000 0000 0001", card2 = "5559 0000 0000 0002";
+        String card1 = DataHelper.getVasyaCardNumber1(), card2 = DataHelper.getVasyaCardNumber2();
 
         page.openLoginPage(testUser);
         String verifyCode = DataHelper.getVerificationCodeFor(testUser);
@@ -50,7 +50,7 @@ public class TransactionRestAPITest {
         RestAPIHelper page = new RestAPIHelper();
         var testUser = DataHelper.getAuthInfo();
         int sum = 100;
-        String card1 = "5559 0000 0000 0001", card2 = "5559 0000 0000 0002";
+        String card1 = DataHelper.getVasyaCardNumber1(), card2 = DataHelper.getVasyaCardNumber2();
 
         page.openLoginPage(testUser);
         String verifyCode = DataHelper.getVerificationCodeFor(testUser);
@@ -77,7 +77,7 @@ public class TransactionRestAPITest {
         RestAPIHelper page = new RestAPIHelper();
         var testUser = DataHelper.getAuthInfo();
         int sum = 15000;
-        String card1 = "5559 0000 0000 0001", card2 = "5559 0000 0000 0002";
+        String card1 = DataHelper.getVasyaCardNumber1(), card2 = DataHelper.getVasyaCardNumber2();
 
         page.openLoginPage(testUser);
         String verifyCode = DataHelper.getVerificationCodeFor(testUser);
@@ -93,8 +93,8 @@ public class TransactionRestAPITest {
         int afterBalanceCard1 = Integer.parseInt(cardsAfter[0].getBalance());
         int afterBalanceCard2 = Integer.parseInt(cardsAfter[1].getBalance());
 
-        int expectedCard1 = beforeBalanceCard1 + sum;
-        int expectedCard2 = beforeBalanceCard2 - sum;
+        int expectedCard1 = beforeBalanceCard1;
+        int expectedCard2 = beforeBalanceCard2;
         Assertions.assertEquals(expectedCard1, afterBalanceCard1);
         Assertions.assertEquals(expectedCard2, afterBalanceCard2);
     }
@@ -104,7 +104,7 @@ public class TransactionRestAPITest {
         RestAPIHelper page = new RestAPIHelper();
         var testUser = DataHelper.getAuthInfo();
         int sum = -100;
-        String card1 = "5559 0000 0000 0001", card2 = "5559 0000 0000 0002";
+        String card1 = DataHelper.getVasyaCardNumber1(), card2 = DataHelper.getVasyaCardNumber2();
 
         page.openLoginPage(testUser);
         String verifyCode = DataHelper.getVerificationCodeFor(testUser);
@@ -120,8 +120,8 @@ public class TransactionRestAPITest {
         int afterBalanceCard1 = Integer.parseInt(cardsAfter[0].getBalance());
         int afterBalanceCard2 = Integer.parseInt(cardsAfter[1].getBalance());
 
-        int expectedCard1 = beforeBalanceCard1 + sum;
-        int expectedCard2 = beforeBalanceCard2 - sum;
+        int expectedCard1 = beforeBalanceCard1 + Math.abs(sum);
+        int expectedCard2 = beforeBalanceCard2 - Math.abs(sum);
         Assertions.assertEquals(expectedCard1, afterBalanceCard1);
         Assertions.assertEquals(expectedCard2, afterBalanceCard2);
     }

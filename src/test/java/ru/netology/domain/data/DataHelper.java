@@ -1,14 +1,8 @@
 package ru.netology.domain.data;
 
 import com.github.javafaker.Faker;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.filter.log.LogDetail;
-import io.restassured.http.ContentType;
-import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
-import lombok.Value;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.sql.DriverManager;
@@ -103,42 +97,8 @@ public class DataHelper {
         }
     }
 
-    //создание Faker пользователя
-    @SneakyThrows
-    public static User createUser() {
-        var runner = new QueryRunner();
-        var sqlAddUser = "INSERT INTO users(id, login, password) VALUES (?, ?, ?);";
-        var sqlSelectUser = "SELECT * FROM users WHERE id = ?;";
-        String userId = getFakerId();
-        String userLogin = getLogin();
-
-        try (
-                var conn = DriverManager.getConnection(
-                        "jdbc:mysql://localhost:3306/app", "app", "pass"
-                );
-
-        ) {
-            runner.update(conn, sqlAddUser,
-                    userId,
-                    userLogin,
-                    //хэшированный пароль qwerty123:
-                    vasyaPassEncrypted);
-            User fakerUser = runner.query(conn, sqlSelectUser, userId, new BeanHandler<>(User.class));
-            fakerUser.setPassword(pass);
-            return fakerUser;
-        }
-    }
-
     private static String getFakerId() {
         return new Faker().internet().uuid();
-    }
-
-    private static String getLogin() {
-        return new Faker().name().firstName();
-    }
-
-    public static String getRandPass() {
-        return new Faker().internet().password();
     }
 
     @SneakyThrows
@@ -155,5 +115,13 @@ public class DataHelper {
         ) {
             return runner.query(conn, sqlRequestTakeUserId, login, new ScalarHandler<>());
         }
+    }
+
+    public static String getVasyaCardNumber1() {
+        return vasyaCardNumber1;
+    }
+
+    public static String getVasyaCardNumber2() {
+        return vasyaCardNumber2;
     }
 }

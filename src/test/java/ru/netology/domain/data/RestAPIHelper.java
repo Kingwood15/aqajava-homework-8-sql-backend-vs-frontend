@@ -4,6 +4,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import lombok.Value;
 
 import static io.restassured.RestAssured.given;
 
@@ -20,7 +21,7 @@ public class RestAPIHelper {
     public void openLoginPage(User user) {
         given()
                 .spec(requestSpec)
-                .body(DataHelper.getAuthInfoRestApi(user.getLogin()))
+                .body(getAuthInfo(user))
                 .when()
                 .post("/api/auth")
                 .then()
@@ -31,7 +32,7 @@ public class RestAPIHelper {
         String token =
                 given()
                         .spec(requestSpec)
-                        .body(DataHelper.getVerificationInfoFor(user.getLogin(), verifyCode))
+                        .body(getVerificationInfo(user, verifyCode))
                         .when()
                         .post("/api/auth/verification")
                         .then()
@@ -60,10 +61,41 @@ public class RestAPIHelper {
         given()
                 .spec(requestSpec)
                 .header("Authorization", "Bearer " + token)
-                .body(DataHelper.getTransaction(cardFrom, cardTo, sum))
+                .body(getTransaction(cardFrom, cardTo, sum))
                 .when()
                 .post("/api/transfer")
                 .then()
                 .statusCode(200);
+    }
+
+    @Value
+    public static class AuthInfo {
+        private String login;
+        private String password;
+    }
+
+    public static AuthInfo getAuthInfo(User authInfo) {
+        return new AuthInfo(authInfo.getLogin(), authInfo.getPassword());
+    }
+
+    @Value
+    public static class VerificationInfo {
+        private String login;
+        private String code;
+    }
+
+    public static VerificationInfo getVerificationInfo(User authInfo, String verifyCode) {
+        return new VerificationInfo(authInfo.getLogin(), verifyCode);
+    }
+
+    @Value
+    public static class Transaction {
+        private String from;
+        private String to;
+        private int amount;
+    }
+
+    public static Transaction getTransaction(String from, String to, int amount) {
+        return new Transaction(from, to, amount);
     }
 }

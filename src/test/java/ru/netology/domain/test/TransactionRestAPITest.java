@@ -21,7 +21,7 @@ public class TransactionRestAPITest {
     @Test
     void shouldTransferFromCard1ToCard2Test() {
         RestAPIHelper page = new RestAPIHelper();
-        var testUser = DataHelper.getAuthInfo("vasya");
+        var testUser = DataHelper.getAuthInfo();
         int sum = 100;
         String card1 = "5559 0000 0000 0001", card2 = "5559 0000 0000 0002";
 
@@ -48,7 +48,7 @@ public class TransactionRestAPITest {
     @Test
     void shouldTransferFromCard2ToCard1Test() {
         RestAPIHelper page = new RestAPIHelper();
-        var testUser = DataHelper.getAuthInfo("vasya");
+        var testUser = DataHelper.getAuthInfo();
         int sum = 100;
         String card1 = "5559 0000 0000 0001", card2 = "5559 0000 0000 0002";
 
@@ -75,7 +75,7 @@ public class TransactionRestAPITest {
     @Test
     void shouldTransferLargeSumFromCard1ToCard2Test() {
         RestAPIHelper page = new RestAPIHelper();
-        var testUser = DataHelper.getAuthInfo("vasya");
+        var testUser = DataHelper.getAuthInfo();
         int sum = 15000;
         String card1 = "5559 0000 0000 0001", card2 = "5559 0000 0000 0002";
 
@@ -102,7 +102,7 @@ public class TransactionRestAPITest {
     @Test
     void shouldTransferNegativeAmountSumFromCard2ToCard1Test() {
         RestAPIHelper page = new RestAPIHelper();
-        var testUser = DataHelper.getAuthInfo("vasya");
+        var testUser = DataHelper.getAuthInfo();
         int sum = -100;
         String card1 = "5559 0000 0000 0001", card2 = "5559 0000 0000 0002";
 

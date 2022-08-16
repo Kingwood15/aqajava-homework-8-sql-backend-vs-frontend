@@ -19,74 +19,19 @@ public class DataHelper {
     private static final String petyaPassEncrypted = "$2a$10$QqnfLHmNwAKFTpaesao90ud169TVhznCueMzmObXFgkoZXQIPCcSe";
     private static final String vasyaCardNumber1 = "5559 0000 0000 0001";
     private static final String vasyaCardNumber2 = "5559 0000 0000 0002";
+    private static final String vasyaLogin = "vasya";
     private static final String pass = "qwerty123";
 
     private DataHelper() {
     }
 
-    @Value
-    public static class AuthInfo {
-        private String login;
-        private String password;
-    }
-
-    public static AuthInfo getAuthInfoRestApi(String login) {
-        return new AuthInfo(login, pass);
-    }
-
-    @Value
-    public static class VerificationInfo {
-        private String login;
-        private String code;
-    }
-
-    public static VerificationInfo getVerificationInfoFor(String login, String code) {
-        return new VerificationInfo(login, code);
-    }
-
-    @Value
-    public static class Transaction {
-        private String from;
-        private String to;
-        private int amount;
-    }
-
-    public static Transaction getTransaction(String from, String to, int amount) {
-        return new Transaction(from, to, amount);
-    }
-
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    public static User getAuthInfo() {
-        return requestUser();
-    }
-
     @SneakyThrows
-    public static User getAuthInfo(String findUser) {
-        var runner = new QueryRunner();
-        var sqlRequestUser = "SELECT * FROM users WHERE login = ?;";
-
-        try (var conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/app", "app", "pass")) {
-            return runner.query(conn, sqlRequestUser, findUser, new BeanHandler<>(User.class));
-        }
+    public static User getAuthInfo() {
+        return new User(getDataBaseId(vasyaLogin), vasyaLogin, pass);
     }
 
     public static String getVerificationCodeFor(User authInfo) {
         return requestCode(authInfo);
-    }
-
-    //запрос пользователя из БД
-    @SneakyThrows
-    private static User requestUser() {
-        var runner = new QueryRunner();
-        var sqlRequestUser = "SELECT * FROM users WHERE login = ?;";
-        String vasyaId = "vasya";
-
-        try (var conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/app", "app", "pass")) {
-            return runner.query(conn, sqlRequestUser, vasyaId, new BeanHandler<>(User.class));
-        }
     }
 
     //запрос кода верификации из БД
@@ -133,14 +78,14 @@ public class DataHelper {
         var sqlInsertUsers = "INSERT INTO users(id, login, password) VALUES (?, ?, ?);";
         var sqlInsertCards = "INSERT INTO cards(id, user_id, number, balance_in_kopecks) VALUES (?, ?, ?, ?);";
 
-        String vasyaId = getId();
+        String vasyaId = getFakerId();
         String vasyaLogin = "vasya";
         String vasyaPass = vasyaPassEncrypted;
-        String vasyaCard1Id = getId();
+        String vasyaCard1Id = getFakerId();
         String CardNumber1 = vasyaCardNumber1;
-        String vasyaCard2Id = getId();
+        String vasyaCard2Id = getFakerId();
         String CardNumber2 = vasyaCardNumber2;
-        String petyaId = getId();
+        String petyaId = getFakerId();
         String petyaLogin = "petya";
         String petyaPass = petyaPassEncrypted;
 
@@ -160,11 +105,11 @@ public class DataHelper {
 
     //создание Faker пользователя
     @SneakyThrows
-    public static User CreateUser() {
+    public static User createUser() {
         var runner = new QueryRunner();
         var sqlAddUser = "INSERT INTO users(id, login, password) VALUES (?, ?, ?);";
         var sqlSelectUser = "SELECT * FROM users WHERE id = ?;";
-        String userId = getId();
+        String userId = getFakerId();
         String userLogin = getLogin();
 
         try (
@@ -176,13 +121,15 @@ public class DataHelper {
             runner.update(conn, sqlAddUser,
                     userId,
                     userLogin,
-                    //Пароль qwerty123:
+                    //хэшированный пароль qwerty123:
                     vasyaPassEncrypted);
-            return runner.query(conn, sqlSelectUser, userId, new BeanHandler<>(User.class));
+            User fakerUser = runner.query(conn, sqlSelectUser, userId, new BeanHandler<>(User.class));
+            fakerUser.setPassword(pass);
+            return fakerUser;
         }
     }
 
-    private static String getId() {
+    private static String getFakerId() {
         return new Faker().internet().uuid();
     }
 
@@ -190,11 +137,23 @@ public class DataHelper {
         return new Faker().name().firstName();
     }
 
-    public static String getValidPass() {
-        return pass;
-    }
-
     public static String getRandPass() {
         return new Faker().internet().password();
+    }
+
+    @SneakyThrows
+    private static String getDataBaseId(String login) {
+        var runner = new QueryRunner();
+
+        var sqlRequestTakeUserId = "SELECT id FROM users WHERE login = ?";
+
+        try (
+                var conn = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:3306/app", "app", "pass"
+                );
+
+        ) {
+            return runner.query(conn, sqlRequestTakeUserId, login, new ScalarHandler<>());
+        }
     }
 }
